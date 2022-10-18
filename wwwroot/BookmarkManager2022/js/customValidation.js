@@ -9,11 +9,11 @@ $(() => {
       );
     });
     $(".URL").each(function () {
-        $(this).attr(
-          "pattern",
-          String.raw`^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$`
-        );
-      });
+      $(this).attr(
+        "pattern",
+        String.raw`(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?$`
+      );
+    });
     $(".phone").each(function () {
       $(this).attr("pattern", String.raw`^\(\d\d\d\)\s\d\d\d-\d\d\d\d$`);
       $(this).mask("(999) 999-9999");
