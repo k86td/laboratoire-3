@@ -20,11 +20,18 @@ const inputSslUrlHandler = (selector) => {
 
 };
 const setDateInputDefaultDate = (selector) => {
-    $(selector).attr("value", new Date(Date.now()).toISOString().split("T")[0]);
+    // $(selector).attr("value", new Date(Date.now()).toISOString().split("T")[0]);
+    document.getElementById(selector).value = new Date(Date.now()).toISOString().split("T")[0];
 };
+// reset a form to it's initial state
 const resetForm = (selector) => {
-    $(selector + " input").val("");
+    $(selector + " input,textarea").val("");
+
+    $(selector + " input[type='date']").each((_, el) => {
+        setDateInputDefaultDate(el.id);
+    });
 };
+// gather form data from their id in the format name_<Id>
 const gatherFormDataToJson = (selector) => {
     const appendToDict = (dict, key, value) => {
         if (dict[key] === undefined)
@@ -42,9 +49,7 @@ const gatherFormDataToJson = (selector) => {
         ids.push(el.id);
     })
 
-    let data = {
-        "Id": 0
-    };
+    let data = {};
 
     ids.forEach(id => {
         if (id == undefined || id == '')
@@ -68,6 +73,7 @@ const gatherFormDataToJson = (selector) => {
 
     return data;
 };
+// unprotected Post Json with support for callbacks
 const uPostJsonCallback = async (url, body, callbacks) => {
     let content = $.ajax({
         method: "POST",
@@ -84,10 +90,23 @@ const uPostJsonCallback = async (url, body, callbacks) => {
     
     content = await content;
 };
+const removeProtFromUrl = (url) => {
+    return url.replace(/(\w+:\/\/)/, "");
+};
 
 const createNouvelleHandler = () => {
-    inputSslUrlHandler("#createNouvelle_preImageUrl");
-    setDateInputDefaultDate("#createNouvelle_Date");
+    inputSslUrlHandler("#createNouvelle_preUrl");
+    setDateInputDefaultDate("createNouvelle_Date");
+
+
+    // set the event handlers
+
+    $("#createNouvelle_Url").on("input", event => {
+        let text = event.target.value;
+
+        if (text.length >= 2)
+            event.target.value = removeProtFromUrl(text);
+    });
 
     $("#createNouvelle").on("submit", event => {
         event.preventDefault()
@@ -95,7 +114,7 @@ const createNouvelleHandler = () => {
 
         // gather form data
         let json = gatherFormDataToJson("#createNouvelle");
-        console.debug(json);
+
         // send post request
         uPostJsonCallback("http://localhost:5000/api/News", json, {
             loading: _ => {
@@ -110,12 +129,20 @@ const createNouvelleHandler = () => {
                 $("#createNouvelle_submit").html("Impossible de créer la nouvelle");
             },
             success: _ => {
-                $('#createNouvelleModal').modal('hide');
+                
+                $('#createNouvelleModal')
+                    .modal('hide')
+                
+                $('#createNouvelle_submit')
+                .removeClass("btn-danger")
+                .addClass("btn-primary")
+                .prop('disabled', false)
+                .html("Créer");
+                
+                resetForm("#createNouvelle");
             }
         });
     });
 };
-
-
 
 createNouvelleHandler();
