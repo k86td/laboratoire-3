@@ -7,13 +7,10 @@ let retreivingData = false;
 webAPI_HEAD(checkETag);
 window.onscroll = function() {
 
-    // @var int totalPageHeight
-    var totalPageHeight = document.body.scrollHeight; 
+    let totalPageHeight = document.body.scrollHeight; 
 
-    // @var int scrollPoint
-    var scrollPoint = window.scrollY + window.innerHeight;
+    let scrollPoint = window.scrollY + window.innerHeight;
 
-    // check if we hit the bottom of the page
     if(scrollPoint >= totalPageHeight)
     {
         if(!retreivingData){
@@ -137,32 +134,6 @@ function fillDataList(dataList, ETag) {
         console.log("No more data to load");
     }
 }
-
-// function handleScroll(){
-//     let lastScrollTop = 0;
-//     window.onscroll = (e)=>{
-//         if (window.scrollTop < lastScrollTop){
-//             // upscroll 
-//             return;
-//         }
-//         else if(window.scrollTop == lastScrollTop){
-//             // no scroll
-//             return;
-//         }
-//         lastScrollTop = scrollDiv.scrollTop <= 0 ? 0 : scrollDiv.scrollTop;
-//         if (window.scrollTop + window.offsetHeight >= window.scrollHeight ){
-//             if(!retreivingData){
-//                 retreivingData = true;
-//                 currentPage++;
-//                 webAPI_HEAD(checkETag);
-//                 console.log("current page : " + currentPage);
-//             }
-//             else{
-//                 console.log("Already retreiving data");
-//             }
-//         }
-//     }
-// }
 
 
 
