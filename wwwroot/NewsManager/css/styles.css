@@ -12,3 +12,55 @@
               user-select: none; /* Non-prefixed version, currently
                                     supported by Chrome, Edge, Opera and Firefox */
   }
+body {
+    background-image: linear-gradient(45deg, rgb(255, 60, 0), rgb(255, 200, 0));
+}
+
+.mainContainer {
+    display: flex;
+    flex-direction: column;
+    max-width: 700px;
+    min-width: 490px;
+    margin: auto;
+    background-color: rgb(255, 255, 255);
+    height: 100vh;
+    border: 1px solid lightgray;
+}
+
+.scrollContainer {
+    overflow-y: scroll;
+    flex:12;
+    border-top: 1px solid lightgray;
+}
+
+.newsList {
+    width: 100%;
+    padding: 10px;
+}
+
+.bookmarkLayout {
+    display: inline-block;
+    align-items: center;
+    border-radius: 8px;
+    padding-left: 5px;
+
+}
+
+
+.texte{
+    width: fit-content;
+}
+
+#createNouvelle_preImageUrl {
+    cursor: pointer;
+}
+
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+       -khtml-user-select: none; /* Konqueror HTML */
+         -moz-user-select: none; /* Old versions of Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Edge, Opera and Firefox */
+  }
