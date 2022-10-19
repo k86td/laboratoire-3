@@ -67,26 +67,61 @@ function webAPI_HEAD(successCallBack) {
     });
 }
 
-function insertDataRow(dataRow){
+// handle setting all buttons for editing
+function editNouvelleHandler () {
+    const onEditHandler = (event) => {
+        console.log("Editing " + event.target.id);
+    };
 
-    console.debug(dataRow);
+    $("button[name='editNouvelle']").each((ind, el) => {
+        let elEvent = $._data(document.getElementById(el.id), 'events');
+        
+        if (elEvent !== undefined && elEvent.click !== undefined)
+            return;
+
+        $("#" + el.id).on("click", onEditHandler);
+    });
+};
+
+// handle setting all buttons for deleting
+function deleteNouvelleHandler () {
+    const onDeleteHandler = (event) => {
+        console.log("Deleting " + event.target.id);
+    };
+
+    $("button[name='deleteNouvelle']").each((ind, el) => {
+        let elEvent = $._data(document.getElementById(el.id), 'events');
+        
+        if (elEvent !== undefined && elEvent.click !== undefined)
+            return;
+
+        $("#" + el.id).on("click", onDeleteHandler);
+    });
+};
+
+function insertDataRow(dataRow){
     $(".newsList").append(New(dataRow));
+    editNouvelleHandler();
+    deleteNouvelleHandler();
 }
 
 const New = (data) => `
 <div class="col">
     <div class="card border-dark">
-        <img src="${ data.ImageUrl == undefined ? data.Url : data.ImageUrl}">
+        <img class="card-img-top" src="${ data.ImageUrl == undefined ? data.Url : data.ImageUrl}">
         <div class="card-body">
-            <h5 class="card-title">${data.Titre}</h5>
-            <p class="card-text">${ data.Texte.length >= 750 ? data.Texte.substring(0, 500) + "..." : data.Texte }</p>
+            <h5 class="card-title">${data.Titre == undefined ? data.Title : data.Titre}</h5>
+            <p class="card-text">${ data.Texte.length >= 500 ? data.Texte.substring(0, 500) + " ..." : data.Texte }</p>
+            <div style="float: right;" class="btn-group" role="group" aria-label="Card interaction">
+                <button name="editNouvelle" id="edit_${data.Id}" type="button" class="btn btn-warning">Modifier</button>
+                <button name="deleteNouvelle" id="delete_${data.Id}" type="button" class="btn btn-danger">Delete</button>
+            </div>
         </div>
         <div class="card-footer">
             <small>${ new Date(parseInt(data.Date)).toISOString().split("T")[0] }</small>
         </div>
     </div>
-</div>
-`;
+</div>`;
 
 
 function fillDataList(dataList, ETag) {
