@@ -3,10 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="./css/styles.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestionnaire de nouvelle</title>
 </head>
 <body>
-    
+    <div class="mainContainer">
+        <div class="scrollContainer">
+            <div class="header">
+                Liste de nouvelles
+            </div>
+            <div class="newsList">
+                <!--- Filled programmatically -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+    <!--<script src="./js/infiniteScrolling.js"></script> -->
+    <script defer>
+        const Host = "http://localhost:5000";
+        const API = "/api/news";
+        const periodicRefreshPeriod = 5;
+        let currentETag = "";
+
+        webAPI_HEAD(checkETag);
+        setInterval(() => {
+            webAPI_HEAD(checkETag);
+        }, periodicRefreshPeriod * 1000);
+
+        function checkETag(ETag) {
+            if (ETag != currentETag) {
+                currentETag = ETag;
+                webAPI_GET_ALL(fillDataList, "");
+            }
+        }
+        function webAPI_GET_ALL(successCallBack, queryString = "") {
+            $.ajax({
+                url: Host + API + queryString,
+                type: 'GET',
+                contentType: 'text/plain',
+                data: {},
+                success: (data, status, xhr) => {
+                    let ETag = xhr.getResponseHeader("ETag");
+                    successCallBack(data, ETag);
+                    console.log("webAPI_GET_ALL - success", data);
+                    console.log(`ETag: ${ETag}`);
+                },
+                error: function (jqXHR) {
+                    errorCallBack(jqXHR.status);
+                    console.log("webAPI_HEAD - error", jqXHR.status);
+                }
+            });
+        }
+        function webAPI_HEAD(successCallBack) {
+            $.ajax({
+                url: Host + API,
+                type: 'HEAD',
+                contentType: 'text/plain',
+                complete: function (request) {
+                    console.log(request.getResponseHeader('ETag'));
+                    successCallBack(request.getResponseHeader('ETag'));
+                },
+                error: function (jqXHR) {
+                    console.log("webAPI_HEAD - error", jqXHR.status);
+                }
+            });
+        }
+
+        function insertDataRow(dataRow){
+            insertStartDiv("newsData")
+            insertDataCell("title", dataRow.Titre);
+            insertDataCell("date", dataRow.Date);
+            insertDataCell("categorie", dataRow.Categorie);
+            insertImageCell(dataRow.ImageUrl);
+            insertDataCell("texte", dataRow.Texte);
+            insertEndDiv();
+        }
+
+        function insertStartDiv(className, id = ""){
+            $(".newsList").append(`<br><br><div class="${className}">`);
+        }
+
+        function insertEndDiv(){
+            $(".newsList").append(`</div>`);
+        } 
+
+        function insertDataCell(className, data) {
+            $(".newsList").append($(`<div class="${className}"><div class='text'> + ${data} + </div></div>"`));
+        }
+
+        function insertImageCell(data) {
+            $(".newsList").append($("<div class='image'><img src='" + data + "'></div>"));
+        }
+
+        function fillDataList(dataList, ETag) {
+            currentETag = ETag;
+            let currentCat = "";
+            for (let data of dataList) {
+                insertDataRow(data);
+            }
+        }
+    </script>
 </body>
 </html>
