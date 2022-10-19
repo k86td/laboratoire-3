@@ -9,7 +9,7 @@ window.onscroll = function() {
 
     let totalPageHeight = document.body.scrollHeight; 
 
-    let scrollPoint = window.scrollY + window.innerHeight;
+    let  scrollPoint = window.scrollY + window.innerHeight;
 
     if(scrollPoint >= totalPageHeight)
     {
