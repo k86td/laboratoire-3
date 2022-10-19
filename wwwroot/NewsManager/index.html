@@ -16,80 +16,78 @@
         integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
 </head>
 <body>
-    <div class="container" style="margin: auto; display: flex; flex-direction: column;">
+    <div class="container" style="padding: 10px;">
+        
+        <div>
+            <div id="createNouvelleModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false"
+                tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h5 class="modal-title">Créer une nouvelle</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <form id="createNouvelle">
+                                <input id="createNouvelle_Id" type="number" hidden value=0>
+
+                                <div class="input-group mb-3">
+                                    <input required placeholder="Titre" class="form-control"
+                                        id="createNouvelle_Title" type="text">
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text noselect"
+                                        id="createNouvelle_preUrl">https://</span>
+                                    <input required placeholder="Url de l'image" class="form-control"
+                                        id="createNouvelle_Url" type="text"
+                                        aria-describedby="createNouvelle_preUrl">
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <input required placeholder="Categorie" class="form-control"
+                                        id="createNouvelle_Categorie" type="text">
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <textarea id="createNouvelle_Texte" required
+                                        placeholder="Description de la nouvelle" class="form-control"></textarea>
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <input required class="form-control" id="createNouvelle_Date" type="date">
+                                </div>
+
+                                <button id="createNouvelle_submit" type="submit"
+                                    class="btn btn-primary">Créer</button>
+                                <button id="createNouvelle_cancel" type="button" class="btn btn-outline-danger"
+                                    data-bs-dismiss="modal" aria-label="Close">Annuler</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col">
-
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                     data-bs-target="#createNouvelleModal">
                     Ajouter une nouvelle
                 </button>
             </div>
 
-            <div>
-                <div id="createNouvelleModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false"
-                    tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-
-                            <div class="modal-header">
-                                <h5 class="modal-title">Créer une nouvelle</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-
-                            <div class="modal-body">
-                                <form id="createNouvelle">
-                                    <input id="createNouvelle_Id" type="number" hidden value=0>
-
-                                    <div class="input-group mb-3">
-                                        <input required placeholder="Titre" class="form-control"
-                                            id="createNouvelle_Title" type="text">
-                                    </div>
-
-                                    <div class="input-group mb-3">
-                                        <span class="input-group-text noselect"
-                                            id="createNouvelle_preUrl">https://</span>
-                                        <input required placeholder="Url de l'image" class="form-control"
-                                            id="createNouvelle_Url" type="text"
-                                            aria-describedby="createNouvelle_preUrl">
-                                    </div>
-
-                                    <div class="input-group mb-3">
-                                        <input required placeholder="Categorie" class="form-control"
-                                            id="createNouvelle_Categorie" type="text">
-                                    </div>
-
-                                    <div class="input-group mb-3">
-                                        <textarea id="createNouvelle_Texte" required
-                                            placeholder="Description de la nouvelle" class="form-control"></textarea>
-                                    </div>
-
-                                    <div class="input-group mb-3">
-                                        <input required class="form-control" id="createNouvelle_Date" type="date">
-                                    </div>
-
-                                    <button id="createNouvelle_submit" type="submit"
-                                        class="btn btn-primary">Créer</button>
-                                    <button id="createNouvelle_cancel" type="button" class="btn btn-outline-danger"
-                                        data-bs-dismiss="modal" aria-label="Close">Annuler</button>
-                                </form>
-                            </div>
-                        </div>
+            <div class="col-10">
+                <div>
+                    <div class="header">
+                        Liste de nouvelles
                     </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- <div class="mainContainer"> -->
-            <!-- <div class="scrollContainer"> -->
-        <div class="row">
-            <div>
-                <div class="Header">
-                    Liste de nouvelles
-                </div>
-                <div class="newsList row row-cols-1 row-cols-md-2 g-4">
-                    <!--- Filled programmatically -->
+                    <div class="newsList row row-cols-1 row-cols-md-2 g-4">
+                        <!--- Filled programmatically -->
+                    </div>
                 </div>
             </div>
         </div>
