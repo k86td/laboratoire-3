@@ -8,7 +8,7 @@
     <title>Gestionnaire de nouvelle</title>
 
     <script src="js/main.js" defer></script>
-
+    <script src="js/infiniteScrolling.js" defer></script>
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
 
     <link rel="stylesheet" href="css/styles.css">
@@ -98,107 +98,107 @@
     
 
     <script defer>
-        const Host = "http://localhost:5000";
-        const API = "/api/news";
-        const periodicRefreshPeriod = 5;
-        let currentETag = "";
+        // const Host = "http://localhost:5000";
+        // const API = "/api/news";
+        // const periodicRefreshPeriod = 5;
+        // let currentETag = "";
 
-        webAPI_HEAD(checkETag);
-        setInterval(() => {
-            webAPI_HEAD(checkETag);
-        }, periodicRefreshPeriod * 1000);
+        // webAPI_HEAD(checkETag);
+        // setInterval(() => {
+        //     webAPI_HEAD(checkETag);
+        // }, periodicRefreshPeriod * 1000);
 
-        function checkETag(ETag) {
-            if (ETag != currentETag) {
-                currentETag = ETag;
-                webAPI_GET_ALL(fillDataList, "");
-            }
-        }
-        function webAPI_GET_ALL(successCallBack, queryString = "") {
-            $.ajax({
-                url: Host + API + queryString,
-                type: 'GET',
-                contentType: 'text/plain',
-                data: {},
-                success: (data, status, xhr) => {
-                    let ETag = xhr.getResponseHeader("ETag");
-                    successCallBack(data, ETag);
-                    console.log("webAPI_GET_ALL - success", data);
-                    console.log(`ETag: ${ETag}`);
-                },
-                error: function (jqXHR) {
-                    errorCallBack(jqXHR.status);
-                    console.log("webAPI_HEAD - error", jqXHR.status);
-                }
-            });
-        }
-        function webAPI_HEAD(successCallBack) {
-            $.ajax({
-                url: Host + API,
-                type: 'HEAD',
-                contentType: 'text/plain',
-                complete: function (request) {
-                    console.log(request.getResponseHeader('ETag'));
-                    successCallBack(request.getResponseHeader('ETag'));
-                },
-                error: function (jqXHR) {
-                    console.log("webAPI_HEAD - error", jqXHR.status);
-                }
-            });
-        }
+        // function checkETag(ETag) {
+        //     if (ETag != currentETag) {
+        //         currentETag = ETag;
+        //         webAPI_GET_ALL(fillDataList, "");
+        //     }
+        // }
+        // function webAPI_GET_ALL(successCallBack, queryString = "") {
+        //     $.ajax({
+        //         url: Host + API + queryString,
+        //         type: 'GET',
+        //         contentType: 'text/plain',
+        //         data: {},
+        //         success: (data, status, xhr) => {
+        //             let ETag = xhr.getResponseHeader("ETag");
+        //             successCallBack(data, ETag);
+        //             console.log("webAPI_GET_ALL - success", data);
+        //             console.log(`ETag: ${ETag}`);
+        //         },
+        //         error: function (jqXHR) {
+        //             errorCallBack(jqXHR.status);
+        //             console.log("webAPI_HEAD - error", jqXHR.status);
+        //         }
+        //     });
+        // }
+        // function webAPI_HEAD(successCallBack) {
+        //     $.ajax({
+        //         url: Host + API,
+        //         type: 'HEAD',
+        //         contentType: 'text/plain',
+        //         complete: function (request) {
+        //             console.log(request.getResponseHeader('ETag'));
+        //             successCallBack(request.getResponseHeader('ETag'));
+        //         },
+        //         error: function (jqXHR) {
+        //             console.log("webAPI_HEAD - error", jqXHR.status);
+        //         }
+        //     });
+        // }
 
-        const New = (data) => `
-        <div class="col">
-            <div class="card border-dark">
-                <img src="${ data.ImageUrl == undefined ? data.Url : data.ImageUrl}">
-                <div class="card-body">
-                    <h5 class="card-title">${data.Titre}</h5>
-                    <p class="card-text">${ data.Texte.length >= 750 ? data.Texte.substring(0, 500) + "..." : data.Texte }</p>
-                </div>
-                <div class="card-footer">
-                    <small>${ new Date(parseInt(data.Date)).toISOString().split("T")[0] }</small>
-                </div>
-            </div>
-        </div>
-        `;
+        // const New = (data) => `
+        // <div class="col">
+        //     <div class="card border-dark">
+        //         <img src="${ data.ImageUrl == undefined ? data.Url : data.ImageUrl}">
+        //         <div class="card-body">
+        //             <h5 class="card-title">${data.Titre}</h5>
+        //             <p class="card-text">${ data.Texte.length >= 750 ? data.Texte.substring(0, 500) + "..." : data.Texte }</p>
+        //         </div>
+        //         <div class="card-footer">
+        //             <small>${ new Date(parseInt(data.Date)).toISOString().split("T")[0] }</small>
+        //         </div>
+        //     </div>
+        // </div>
+        // `;
         
-        function insertDataRow(dataRow){
+        // function insertDataRow(dataRow){
 
-            console.debug(dataRow);
-            $(".newsList").append(New(dataRow));
+        //     console.debug(dataRow);
+        //     $(".newsList").append(New(dataRow));
 
-            // insertStartDiv("newsData")
-            // insertDataCell("title", dataRow.Titre);
-            // insertDataCell("date", dataRow.Date);
-            // insertDataCell("categorie", dataRow.Categorie);
-            // insertImageCell(dataRow.ImageUrl);
-            // insertDataCell("texte", dataRow.Texte);
-            // insertEndDiv();
-        }
+        //     // insertStartDiv("newsData")
+        //     // insertDataCell("title", dataRow.Titre);
+        //     // insertDataCell("date", dataRow.Date);
+        //     // insertDataCell("categorie", dataRow.Categorie);
+        //     // insertImageCell(dataRow.ImageUrl);
+        //     // insertDataCell("texte", dataRow.Texte);
+        //     // insertEndDiv();
+        // }
 
-        function insertStartDiv(className, id = ""){
-            $(".newsList").append(`<br><br><div class="${className}">`);
-        }
+        // function insertStartDiv(className, id = ""){
+        //     $(".newsList").append(`<br><br><div class="${className}">`);
+        // }
 
-        function insertEndDiv(){
-            $(".newsList").append(`</div>`);
-        } 
+        // function insertEndDiv(){
+        //     $(".newsList").append(`</div>`);
+        // } 
 
-        function insertDataCell(className, data) {
-            $(".newsList").append($(`<div class="${className}"><div class='text'> + ${data} + </div></div>"`));
-        }
+        // function insertDataCell(className, data) {
+        //     $(".newsList").append($(`<div class="${className}"><div class='text'> + ${data} + </div></div>"`));
+        // }
 
-        function insertImageCell(data) {
-            $(".newsList").append($("<div class='image'><img src='" + data + "'></div>"));
-        }
+        // function insertImageCell(data) {
+        //     $(".newsList").append($("<div class='image'><img src='" + data + "'></div>"));
+        // }
 
-        function fillDataList(dataList, ETag) {
-            currentETag = ETag;
-            let currentCat = "";
-            for (let data of dataList) {
-                insertDataRow(data);
-            }
-        }
+        // function fillDataList(dataList, ETag) {
+        //     currentETag = ETag;
+        //     let currentCat = "";
+        //     for (let data of dataList) {
+        //         insertDataRow(data);
+        //     }
+        // }
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"

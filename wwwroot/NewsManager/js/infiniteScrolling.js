@@ -1,67 +1,135 @@
-const newsContainer = document.getElementById("newsContainer");
-const newsCountElem = document.getElementById("newsCount");
-const newsTotalElem = document.getElementById("newsTotal");
-const loader = document.getElementById("loader");
-const newsLimit = 99;
-const newsIncrease = 5;
-const pageCount = Math.ceil(newsLimit / newsIncrease);
+const Host = "http://localhost:5000";
+const API = "/api/news";
+const periodicRefreshPeriod = 5;
+let currentETag = "";
+let currentPage = 1;
+let retreivingData = false;
+webAPI_HEAD(checkETag);
+window.onscroll = function() {
 
-var throttleTimer;
-let currentPage = 1;            
-newsTotalElem.innerHTML = newsLimit;
-function createNews(index) {
-    const news = document.createElement("div");
-    news.className = "card";
-    news.innerHTML = index;
-    newsContainer.appendChild(news);
-};
+    // @var int totalPageHeight
+    var totalPageHeight = document.body.scrollHeight; 
 
-function addNews(pageIndex) {
-    currentPage = pageIndex;
+    // @var int scrollPoint
+    var scrollPoint = window.scrollY + window.innerHeight;
 
-    const startRange = (pageIndex - 1) * newsIncrease;
-    const endRange =
-        currentPage == pageCount ?newsLimit : pageIndex * newsIncrease;
-
-    newsCountElem.innerHTML = endRange;
-
-    for (let i = startRange + 1; i <= endRange; i++) {
-        createNews(i);
+    // check if we hit the bottom of the page
+    if(scrollPoint >= totalPageHeight)
+    {
+        if(!retreivingData){
+            retreivingData = true;
+            currentPage++;
+            webAPI_HEAD(checkETag);
+            console.log("current page : " + currentPage);
+        }
+        else{
+            console.log("Already retreiving data");
+        }
     }
-};
+}
 
-function handleInfiniteScroll(){
-    throttle(() => {
-        const endOfPage =
-        window.innerHeight + window.pageYOffset >= document.body.offsetHeight;
-
-        if (endOfPage) {
-        addCards(currentPage + 1);
+function checkETag(ETag) {
+    if (ETag != currentETag) {
+        currentETag = ETag;
+        webAPI_GET_ALL(fillDataList, "?page=" + currentPage);
+    }
+}
+function webAPI_GET_ALL(successCallBack, queryString = null) {
+    $.ajax({
+        url: Host + API + queryString,
+        type: 'GET',
+        contentType: 'text/plain',
+        data: {},
+        success: (data, status, xhr) => {
+            let ETag = xhr.getResponseHeader("ETag");
+            successCallBack(data, ETag);
+            console.log("webAPI_GET_ALL - success", data);
+            console.log(`ETag: ${ETag}`);
+        },
+        error: function (jqXHR) {
+            errorCallBack(jqXHR.status);
+            console.log("webAPI_HEAD - error", jqXHR.status);
         }
-
-        if (currentPage === pageCount) {
-            removeInfiniteScroll();
+    });
+}
+function webAPI_HEAD(successCallBack) {
+    $.ajax({
+        url: Host + API,
+        type: 'HEAD',
+        contentType: 'text/plain',
+        complete: function (request) {
+            console.log(request.getResponseHeader('ETag'));
+            successCallBack(request.getResponseHeader('ETag'));
+        },
+        error: function (jqXHR) {
+            console.log("webAPI_HEAD - error", jqXHR.status);
         }
-    }, 1000);
-};
-function removeInfiniteScroll(){
-    loader.remove();
-    window.removeEventListener("scroll", handleInfiniteScroll);
-};
+    });
+}
 
-function throttle(callback, time){
-    if (throttleTimer) return;
+function insertDataRow(dataRow){
 
-    throttleTimer = true;
+    console.debug(dataRow);
+    $(".newsList").append(New(dataRow));
+}
 
-    setTimeout(() => {
-        callback();
-        throttleTimer = false;
-    }, time);
-};
+const New = (data) => `
+<div class="col">
+    <div class="card border-dark">
+        <img src="${ data.ImageUrl == undefined ? data.Url : data.ImageUrl}">
+        <div class="card-body">
+            <h5 class="card-title">${data.Titre}</h5>
+            <p class="card-text">${ data.Texte.length >= 750 ? data.Texte.substring(0, 500) + "..." : data.Texte }</p>
+        </div>
+        <div class="card-footer">
+            <small>${ new Date(parseInt(data.Date)).toISOString().split("T")[0] }</small>
+        </div>
+    </div>
+</div>
+`;
 
-window.onload = function () {
-    addNews(currentPage);
-};
 
-window.addEventListener("scroll", handleInfiniteScroll);
+function fillDataList(dataList, ETag) {
+    
+    if(dataList.lenght != 0){
+        currentETag = ETag;
+        for (let data of dataList) {
+            insertDataRow(data);
+        }
+        retreivingData = false;
+    }
+    else{
+        console.log("No more data to load");
+    }
+}
+
+// function handleScroll(){
+//     let lastScrollTop = 0;
+//     window.onscroll = (e)=>{
+//         if (window.scrollTop < lastScrollTop){
+//             // upscroll 
+//             return;
+//         }
+//         else if(window.scrollTop == lastScrollTop){
+//             // no scroll
+//             return;
+//         }
+//         lastScrollTop = scrollDiv.scrollTop <= 0 ? 0 : scrollDiv.scrollTop;
+//         if (window.scrollTop + window.offsetHeight >= window.scrollHeight ){
+//             if(!retreivingData){
+//                 retreivingData = true;
+//                 currentPage++;
+//                 webAPI_HEAD(checkETag);
+//                 console.log("current page : " + currentPage);
+//             }
+//             else{
+//                 console.log("Already retreiving data");
+//             }
+//         }
+//     }
+// }
+
+
+
+
+
