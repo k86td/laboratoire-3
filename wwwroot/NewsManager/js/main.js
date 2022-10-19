@@ -1,3 +1,4 @@
+// make it possible to click on span to switch from https to http
 const inputSslUrlHandler = (selector) => {
     $(selector).on('click', event => {
         // toggle http/https protocol on click
@@ -19,9 +20,17 @@ const inputSslUrlHandler = (selector) => {
     });
 
 };
+// set the default date (today) to the selector
 const setDateInputDefaultDate = (selector) => {
+    // only id supported
+
     // $(selector).attr("value", new Date(Date.now()).toISOString().split("T")[0]);
-    document.getElementById(selector).value = new Date(Date.now()).toISOString().split("T")[0];
+    if (selector[0] == "#") {
+        selector = selector.replace("#", "");
+        document.getElementById(selector).value = new Date(Date.now()).toISOString().split("T")[0];
+    }
+    else 
+        console.error(`Selector [${selector}] is not an id`);
 };
 // reset a form to it's initial state
 const resetForm = (selector) => {
@@ -94,10 +103,11 @@ const removeProtFromUrl = (url) => {
     return url.replace(/(\w+:\/\/)/, "");
 };
 
+const HOST = "http://localhost:5000";
+
 const createNouvelleHandler = () => {
     inputSslUrlHandler("#createNouvelle_preUrl");
-    setDateInputDefaultDate("createNouvelle_Date");
-
+    setDateInputDefaultDate("#createNouvelle_Date");
 
     // set the event handlers
 
@@ -116,7 +126,7 @@ const createNouvelleHandler = () => {
         let json = gatherFormDataToJson("#createNouvelle");
 
         // send post request
-        uPostJsonCallback("http://localhost:5000/api/News", json, {
+        uPostJsonCallback(HOST + "/api/News", json, {
             loading: _ => {
                 // set rolling icon
                 $("#createNouvelle_submit").prop('disabled', true);
@@ -145,4 +155,5 @@ const createNouvelleHandler = () => {
     });
 };
 
+// create the handlers that manages creating a News
 createNouvelleHandler();
