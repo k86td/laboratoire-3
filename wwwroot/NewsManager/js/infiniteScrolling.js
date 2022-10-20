@@ -15,13 +15,13 @@ setInterval(() => {
 
 window.onscroll = function() {
     let totalPageHeight = document.body.scrollHeight; 
-    let  scrollPoint = window.scrollY + window.innerHeight;
+    let scrollPoint = window.scrollY + window.innerHeight;
     if(scrollPoint >= totalPageHeight)
     {
         if(!retreivingData){
             retreivingData = true;
             currentOffset++;
-            webAPI_HEAD(webAPI_GET_ALL(fillDataList,"?sort=Date,desc&offset=" + currentOffset + "&limit=" + dataLimit));
+            webAPI_GET_ALL(fillDataList,"?sort=Date,desc&offset=" + currentOffset + "&limit=" + dataLimit);
         }
         else{
             console.log("Already retreiving data");
@@ -131,7 +131,6 @@ const New = (data) => `
 
 function fillDataList(dataList, ETag) {
     currentETag = ETag;
-    console.debug(dataList);
     if(dataList.length != 0){
         for (let data of dataList) {
             insertDataRow(data);
@@ -153,7 +152,7 @@ function refreshData(dataList){
         for (let data of dataList) {
             insertDataRow(data);
         }
-        console.log(currentDataNumber);
+        console.log("Data changed when" + currentDataNumber + "data was loaded");
     }
 }
 
