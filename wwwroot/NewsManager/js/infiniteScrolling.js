@@ -110,8 +110,8 @@ const New = (data) => `
             <h5 class="card-title">${data.Titre == undefined ? data.Title : data.Titre}</h5>
             <p class="card-text">${ data.Texte.length >= 500 ? data.Texte.substring(0, 500) + " ..." : data.Texte }</p>
             <div style="float: right;" class="btn-group" role="group" aria-label="Card interaction">
-                <button name="editNouvelle" id="edit_${data.Id}" type="button" class="btn btn-warning">Modifier</button>
-                <button name="deleteNouvelle" id="delete_${data.Id}" type="button" class="btn btn-danger">Delete</button>
+                <button name="editNouvelle" id="edit_${data.Id}" type="button" class="btn btn-warning" tooltip="Modifier la nouvelle" tooltip-position="left"><span class="glyphicon glyphicon-edit"></span></button>
+                <button name="deleteNouvelle" id="delete_${data.Id}" type="button" class="btn btn-danger" tooltip="Supprimer la nouvelle" tooltip-position="right"><span class="glyphicon glyphicon-remove"></span></button>
             </div>
         </div>
         <div class="card-footer">
