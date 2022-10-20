@@ -67,7 +67,8 @@ function webAPI_HEAD(successCallBack) {
 // handle setting all buttons for editing
 function editNouvelleHandler () {
     const onEditHandler = (event) => {
-        console.log("Editing " + event.target.id);
+
+        console.log("Editing " + event.delegateTarget.id);
     };
 
     $("button[name='editNouvelle']").each((ind, el) => {
@@ -83,7 +84,8 @@ function editNouvelleHandler () {
 // handle setting all buttons for deleting
 function deleteNouvelleHandler () {
     const onDeleteHandler = (event) => {
-        console.log("Deleting " + event.target.id);
+        
+        console.log("Deleting " + event.delegateTarget.id);
     };
 
     $("button[name='deleteNouvelle']").each((ind, el) => {
@@ -117,8 +119,8 @@ const New = (data) => `
             <h5 class="card-title">${data.Titre == undefined ? data.Title : data.Titre}</h5>
             <p class="card-text">${ data.Texte.length >= 500 ? data.Texte.substring(0, 500) + " ..." : data.Texte }</p>
             <div style="float: right;" class="btn-group" role="group" aria-label="Card interaction">
-                <button name="editNouvelle" id="edit_${data.Id}" type="button" class="btn btn-warning" tooltip="Modifier la nouvelle" tooltip-position="left"><span class="glyphicon glyphicon-edit"></span></button>
-                <button name="deleteNouvelle" id="delete_${data.Id}" type="button" class="btn btn-danger" tooltip="Supprimer la nouvelle" tooltip-position="right"><span class="glyphicon glyphicon-remove"></span></button>
+                <button name="editNouvelle" id="edit_${data.Id}" type="button" class="btn btn-warning" tooltip="Modifier la nouvelle" tooltip-position="left"><i style="font-size: 1.5rem; color: white;" class="bi bi-pencil-square"></i></button>
+                <button name="deleteNouvelle" id="delete_${data.Id}" type="button" class="btn btn-danger" tooltip="Supprimer la nouvelle" tooltip-position="right"><i style="font-size: 1.5rem; color: white;" class="bi bi-journal-minus"></i></button>
             </div>
         </div>
         <div class="card-footer">
