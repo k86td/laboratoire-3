@@ -7,7 +7,7 @@ let currentETag = "";
 let currentOffset = 0;
 let currentPage = 0;
 let retreivingData = false;
-webAPI_HEAD(webAPI_GET_ALL(fillDataList,"?sort=Date,desc&offset=" + currentOffset + "&limit=" + dataLimit + "&page=" + ++currentPage));
+webAPI_GET_ALL(fillDataList,"?sort=Date,desc&offset=" + currentOffset + "&limit=" + dataLimit);
 
 setInterval(() => {
     webAPI_HEAD(checkETag);
@@ -145,8 +145,8 @@ function fillDataList(dataList, ETag) {
 }
 
 setEditDeleteHandler();
-
-function refreshData(dataList){
+function refreshData(dataList, ETag){
+    currentETag = ETag;
     $(".newsList").empty();
     if(dataList.lenght != 0){
         for (let data of dataList) {
