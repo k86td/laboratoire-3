@@ -37,7 +37,7 @@ const resetForm = (selector) => {
     $(selector + " input,textarea").val("");
 
     $(selector + " input[type='date']").each((_, el) => {
-        setDateInputDefaultDate(el.id);
+        setDateInputDefaultDate("#" + el.id);
     });
 };
 // gather form data from their id in the format name_<Id>
@@ -102,6 +102,19 @@ const uPostJsonCallback = async (url, body, callbacks) => {
 const removeProtFromUrl = (url) => {
     return url.replace(/(\w+:\/\/)/, "");
 };
+const uDelete = async (url, callbacks) => {
+    let content = $.ajax({
+        method: "DELETE",
+        url: url,
+        success: callbacks.success,
+        error: callbacks.error
+    });
+
+    if (callbacks.loading !== undefined)
+        callbacks.loading();
+    
+    content = await content;
+};
 
 const HOST = "http://localhost:5000";
 
@@ -129,8 +142,9 @@ const createNouvelleHandler = () => {
         uPostJsonCallback(HOST + "/api/News", json, {
             loading: _ => {
                 // set rolling icon
-                $("#createNouvelle_submit").prop('disabled', true);
-                $("#createNouvelle_submit").html('<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div>');
+                $("#createNouvelle_submit")
+                    .prop('disabled', true)
+                    .html('<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div>');
             },
             error: _ => {
                 $("#createNouvelle_submit").prop('disabled', false);
@@ -139,21 +153,58 @@ const createNouvelleHandler = () => {
                 $("#createNouvelle_submit").html("Impossible de créer la nouvelle");
             },
             success: _ => {
-                
                 $('#createNouvelleModal')
                     .modal('hide')
                 
                 $('#createNouvelle_submit')
-                .removeClass("btn-danger")
-                .addClass("btn-primary")
-                .prop('disabled', false)
-                .html("Créer");
+                    .removeClass("btn-danger")
+                    .addClass("btn-primary")
+                    .prop('disabled', false)
+                    .html("Créer");
                 
                 resetForm("#createNouvelle");
+                webAPI_GET_ALL(fillDataList);
             }
         });
     });
 };
 
+const deleteNouvelleHandler = () => {
+
+
+    $("#deleteAlertForm").on("submit", event => {
+        event.preventDefault()
+        event.stopPropagation()
+
+        let id = $("#deleteAlert_Id").val();
+
+        console.debug(`Deleting nouvelle with id ${id}`);
+
+        uDelete(HOST + "/api/News/" + id, {
+            loading: _ => {
+                $("#deleteNouvelle_submit")
+                    .prop('disabled', true)
+                    .html('<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div>');
+            },
+            error: _ => {
+                $('#createNouvelle_submit').prop('disabled', false)
+                $('#createNouvelle_submit').html("Impossible de supprimer la nouvelle");
+            },
+            success: _ => {
+                $('#deleteAlertModal')
+                    .modal('hide')
+
+                $('#createNouvelle_submit')
+                    .prop('disabled', false)
+                    .html("Confirmer");
+
+                resetForm("#deleteAlertForm");
+                webAPI_GET_ALL(fillDataList);
+            }   
+        })
+    });
+};
+
 // create the handlers that manages creating a News
 createNouvelleHandler();
+deleteNouvelleHandler();

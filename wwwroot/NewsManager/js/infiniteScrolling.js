@@ -4,6 +4,7 @@ const periodicRefreshPeriod = 5;
 const dataLimit = 4;
 let currentETag = "";
 let currentOffset = 0;
+let currentPage = 0;
 let retreivingData = false;
 webAPI_HEAD(checkETag);
 window.onscroll = function() {
@@ -28,7 +29,7 @@ window.onscroll = function() {
 function checkETag(ETag) {
     //if (ETag != currentETag) {
         currentETag = ETag;
-        webAPI_GET_ALL(fillDataList,"?sort=Date,desc&offset=" + currentOffset + "&limit=" + dataLimit);
+        webAPI_GET_ALL(fillDataList,"?sort=Date,desc&offset=" + currentOffset + "&limit=" + dataLimit + "&page=" + ++currentPage);
     //}
 }
 function webAPI_GET_ALL(successCallBack, queryString = null) {
@@ -44,7 +45,8 @@ function webAPI_GET_ALL(successCallBack, queryString = null) {
             console.log(`ETag: ${ETag}`);
         },
         error: function (jqXHR) {
-            errorCallBack(jqXHR.status);
+            if (errorCallBack !== undefined)
+                errorCallBack(jqXHR.status);
             console.log("webAPI_HEAD - error", jqXHR.status);
         }
     });
@@ -64,37 +66,17 @@ function webAPI_HEAD(successCallBack) {
     });
 }
 
-// handle setting all buttons for editing
-function editNouvelleHandler () {
-    const onEditHandler = (event) => {
+function setEditDeleteHandler () {
+    $("#deleteAlertModal").on("show.bs.modal", event => {
+        console.debug(event);
+        let button = event.relatedTarget;
 
-        console.log("Editing " + event.delegateTarget.id);
-    };
+        let id = $(button).attr('data-bs-targetId');
+        let title = $(button).attr('data-bs-targetTitle');
 
-    $("button[name='editNouvelle']").each((ind, el) => {
-        let elEvent = $._data(document.getElementById(el.id), 'events');
+        $("#deleteAlert_Title").html(title);
+        $("#deleteAlert_Id").val(id);
         
-        if (elEvent !== undefined && elEvent.click !== undefined)
-            return;
-
-        $("#" + el.id).on("click", onEditHandler);
-    });
-};
-
-// handle setting all buttons for deleting
-function deleteNouvelleHandler () {
-    const onDeleteHandler = (event) => {
-        
-        console.log("Deleting " + event.delegateTarget.id);
-    };
-
-    $("button[name='deleteNouvelle']").each((ind, el) => {
-        let elEvent = $._data(document.getElementById(el.id), 'events');
-        
-        if (elEvent !== undefined && elEvent.click !== undefined)
-            return;
-
-        $("#" + el.id).on("click", onDeleteHandler);
     });
 };
 
@@ -106,21 +88,36 @@ function removeUndefinedImages () {
 
 function insertDataRow(dataRow){
     $(".newsList").append(New(dataRow));
-    editNouvelleHandler();
-    deleteNouvelleHandler();
     removeUndefinedImages();
 }
 
 const New = (data) => `
 <div class="col">
     <div class="card border-dark">
-        <img class="card-img-top" src="${ data.ImageUrl == undefined ? data.Url : data.ImageUrl}">
+        <img class="card-img-top" src="${ data.Url}">
         <div class="card-body">
-            <h5 class="card-title">${data.Titre == undefined ? data.Title : data.Titre}</h5>
+            <h5 class="card-title">${data.Title}</h5>
             <p class="card-text">${ data.Texte.length >= 500 ? data.Texte.substring(0, 500) + " ..." : data.Texte }</p>
             <div style="float: right;" class="btn-group" role="group" aria-label="Card interaction">
-                <button name="editNouvelle" id="edit_${data.Id}" type="button" class="btn btn-warning" tooltip="Modifier la nouvelle" tooltip-position="left"><i style="font-size: 1.5rem; color: white;" class="bi bi-pencil-square"></i></button>
-                <button name="deleteNouvelle" id="delete_${data.Id}" type="button" class="btn btn-danger" tooltip="Supprimer la nouvelle" tooltip-position="right"><i style="font-size: 1.5rem; color: white;" class="bi bi-journal-minus"></i></button>
+                <button name="editNouvelle" id="edit_${data.Id}"  
+                    type="button" 
+                    class="btn btn-warning" 
+                    tooltip="Modifier la nouvelle" 
+                    tooltip-position="left">
+                    <i style="font-size: 1.5rem; color: white;" class="bi bi-pencil-square"></i>
+                </button>
+                <button name="deleteNouvelle" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#deleteAlertModal" 
+                    data-bs-targetId="${data.Id}"
+                    data-bs-targetTitle="${data.Titre == undefined ? data.Title : data.Titre}"
+                    id="delete_${data.Id}" 
+                    type="button" 
+                    class="btn btn-danger" 
+                    tooltip="Supprimer la nouvelle" 
+                    tooltip-position="right">
+                    <i style="font-size: 1.5rem; color: white;" class="bi bi-journal-minus"></i>
+                </button>
             </div>
         </div>
         <div class="card-footer">
@@ -131,8 +128,7 @@ const New = (data) => `
 
 
 function fillDataList(dataList, ETag) {
-    
-    if(dataList.lenght != 0){
+    if(dataList.length != 0){
         currentETag = ETag;
         for (let data of dataList) {
             insertDataRow(data);
@@ -144,7 +140,6 @@ function fillDataList(dataList, ETag) {
     }
 }
 
-
-
+setEditDeleteHandler();
 
 

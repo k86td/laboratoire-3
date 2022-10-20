@@ -23,7 +23,7 @@
         <div>
             <div id="createNouvelleModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false"
                 tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog">
+                <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
 
                         <div class="modal-header">
@@ -74,14 +74,40 @@
             </div>
         </div>
 
+        <div>
+            <div class="modal fade" id="deleteAlertModal" data-bs-backdrop="static" data-bs-keyboard="false">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title fs-5">Confirmation suppression de la nouvelle</h2>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="deleteAlertForm">
+                                <div class="mb-3">
+                                    <input hidden id="deleteAlert_Id">
+                                    Voulez vous vraiment supprimer la nouvelle ayant le titre "<span style="font-style: italic;" id="deleteAlert_Title"></span>"?
+                                </div>
+
+                                <button id="deleteNouvelle_submit" type="submit"
+                                    class="btn btn-danger">Confirmer</button>
+                                <button id="deleteNouvelle_cancel" type="button" class="btn btn-outline-primary"
+                                    data-bs-dismiss="modal" aria-label="Close">Annuler</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col">
-                <button type="button" class="btn btn-primary"
-                    data-bs-target="#createNouvelleModal"
-                    data-bs-toggle="modal"
-                    tooltip="Ajouter une nouvelle" tooltip-position="right">
-                    <i style="font-size: 1.5rem; color: white;" class="bi bi-journal-plus"></i>
-                </button>
+                <div class="sticky-top" style="padding: 10px;">
+                    <button type="button" class="btn btn-primary" data-bs-target="#createNouvelleModal" data-bs-toggle="modal"
+                        tooltip="Ajouter une nouvelle" tooltip-position="right">
+                        <i style="font-size: 1.5rem; color: white;" class="bi bi-journal-plus"></i>
+                    </button>
+                </div>
             </div>
 
             <div class="col-10">
