@@ -163,6 +163,7 @@ const createNouvelleHandler = () => {
                     .html("Créer");
                 
                 resetForm("#createNouvelle");
+                webAPI_HEAD(checkETag);
             }
         });
     });
@@ -198,6 +199,7 @@ const deleteNouvelleHandler = () => {
                     .html("Confirmer");
 
                 resetForm("#deleteAlertForm");
+                webAPI_HEAD(checkETag);
             }
         });
     });
