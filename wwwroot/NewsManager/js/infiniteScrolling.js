@@ -7,7 +7,7 @@ let currentETag = "";
 let currentOffset = 0;
 let currentPage = 0;
 let retreivingData = false;
-webAPI_HEAD(webAPI_GET_ALL(fillDataList,"?sort=Date,desc&offset=" + currentOffset + "&limit=" + dataLimit));
+webAPI_HEAD(webAPI_GET_ALL(fillDataList,"?sort=Date,desc&offset=" + currentOffset + "&limit=" + dataLimit + "&page=" + ++currentPage));
 
 setInterval(() => {
     webAPI_HEAD(checkETag);
@@ -32,7 +32,7 @@ window.onscroll = function() {
 function checkETag(ETag) {
     if (ETag != currentETag) {
         currentETag = ETag;
-        webAPI_GET_ALL(refreshData,"?sort=Date,desc&limit=" + currentDataNumber);
+        webAPI_GET_ALL(refreshData,"?sort=Date,desc&limit=" + currentDataNumber + "&page=" + ++currentPage);
     }
 }
 function webAPI_GET_ALL(successCallBack, queryString = null) {
@@ -79,7 +79,6 @@ function setEditDeleteHandler () {
 
         $("#deleteAlert_Title").html(title);
         $("#deleteAlert_Id").val(id);
-        
     });
 };
 
@@ -132,8 +131,8 @@ const New = (data) => `
 
 function fillDataList(dataList, ETag) {
     currentETag = ETag;
-
-    if(dataList.lenght != 0){
+    console.debug(dataList);
+    if(dataList.length != 0){
         for (let data of dataList) {
             insertDataRow(data);
             currentDataNumber++;
@@ -147,6 +146,7 @@ function fillDataList(dataList, ETag) {
 }
 
 setEditDeleteHandler();
+
 function refreshData(dataList){
     $(".newsList").empty();
     if(dataList.lenght != 0){
