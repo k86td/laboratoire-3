@@ -1,8 +1,9 @@
 const Host = "http://localhost:5000";
 const API = "/api/news";
 const periodicRefreshPeriod = 5;
+const dataLimit = 4;
 let currentETag = "";
-let currentPage = 1;
+let currentOffset = 0;
 let retreivingData = false;
 webAPI_HEAD(checkETag);
 window.onscroll = function() {
@@ -15,9 +16,8 @@ window.onscroll = function() {
     {
         if(!retreivingData){
             retreivingData = true;
-            currentPage++;
+            currentOffset++;
             webAPI_HEAD(checkETag);
-            console.log("current page : " + currentPage);
         }
         else{
             console.log("Already retreiving data");
@@ -26,10 +26,10 @@ window.onscroll = function() {
 }
 
 function checkETag(ETag) {
-    if (ETag != currentETag) {
+    //if (ETag != currentETag) {
         currentETag = ETag;
-        webAPI_GET_ALL(fillDataList, "?page=" + currentPage);
-    }
+        webAPI_GET_ALL(fillDataList,"?sort=Date,desc&offset=" + currentOffset + "&limit=" + dataLimit);
+    //}
 }
 function webAPI_GET_ALL(successCallBack, queryString = null) {
     $.ajax({
