@@ -2,22 +2,25 @@ const Host = "http://localhost:5000";
 const API = "/api/news";
 const periodicRefreshPeriod = 5;
 const dataLimit = 4;
+let currentDataNumber = 0;
 let currentETag = "";
 let currentOffset = 0;
 let retreivingData = false;
-webAPI_HEAD(checkETag);
+webAPI_HEAD(webAPI_GET_ALL(fillDataList,"?sort=Date,desc&offset=" + currentOffset + "&limit=" + dataLimit));
+
+setInterval(() => {
+    webAPI_HEAD(checkETag);
+}, periodicRefreshPeriod * 1000);
+
 window.onscroll = function() {
-
     let totalPageHeight = document.body.scrollHeight; 
-
     let  scrollPoint = window.scrollY + window.innerHeight;
-
     if(scrollPoint >= totalPageHeight)
     {
         if(!retreivingData){
             retreivingData = true;
             currentOffset++;
-            webAPI_HEAD(checkETag);
+            webAPI_HEAD(webAPI_GET_ALL(fillDataList,"?sort=Date,desc&offset=" + currentOffset + "&limit=" + dataLimit));
         }
         else{
             console.log("Already retreiving data");
@@ -26,10 +29,10 @@ window.onscroll = function() {
 }
 
 function checkETag(ETag) {
-    //if (ETag != currentETag) {
+    if (ETag != currentETag) {
         currentETag = ETag;
-        webAPI_GET_ALL(fillDataList,"?sort=Date,desc&offset=" + currentOffset + "&limit=" + dataLimit);
-    //}
+        webAPI_GET_ALL(refreshData,"?sort=Date,desc&limit=" + currentDataNumber);
+    }
 }
 function webAPI_GET_ALL(successCallBack, queryString = null) {
     $.ajax({
@@ -122,18 +125,31 @@ const New = (data) => `
 
 
 function fillDataList(dataList, ETag) {
-    
+    currentETag = ETag;
+
     if(dataList.lenght != 0){
-        currentETag = ETag;
         for (let data of dataList) {
             insertDataRow(data);
+            currentDataNumber++;
         }
         retreivingData = false;
+        console.log(currentDataNumber);
     }
     else{
         console.log("No more data to load");
     }
 }
+
+function refreshData(dataList){
+    $(".newsList").empty();
+    if(dataList.lenght != 0){
+        for (let data of dataList) {
+            insertDataRow(data);
+        }
+        console.log(currentDataNumber);
+    }
+}
+
 
 
 
