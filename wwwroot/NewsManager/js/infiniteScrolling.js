@@ -96,10 +96,17 @@ function deleteNouvelleHandler () {
     });
 };
 
+function removeUndefinedImages () {
+    $("img").on("error", event => {
+        $(event.target).remove();
+    });
+};
+
 function insertDataRow(dataRow){
     $(".newsList").append(New(dataRow));
     editNouvelleHandler();
     deleteNouvelleHandler();
+    removeUndefinedImages();
 }
 
 const New = (data) => `
@@ -111,7 +118,7 @@ const New = (data) => `
             <p class="card-text">${ data.Texte.length >= 500 ? data.Texte.substring(0, 500) + " ..." : data.Texte }</p>
             <div style="float: right;" class="btn-group" role="group" aria-label="Card interaction">
                 <button name="editNouvelle" id="edit_${data.Id}" type="button" class="btn btn-warning">Modifier</button>
-                <button name="deleteNouvelle" id="delete_${data.Id}" type="button" class="btn btn-danger">Delete</button>
+                <button name="deleteNouvelle" id="delete_${data.Id}" type="button" class="btn btn-danger">Supprimer</button>
             </div>
         </div>
         <div class="card-footer">
