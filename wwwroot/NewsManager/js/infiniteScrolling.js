@@ -32,7 +32,7 @@ window.onscroll = function() {
 function checkETag(ETag) {
     if (ETag != currentETag) {
         currentETag = ETag;
-        webAPI_GET_ALL(refreshData,"?sort=Date,desc&limit=" + currentDataNumber);
+        webAPI_GET_ALL(refreshData,"?sort=Date,desc&limit=" + currentDataNumber + "&page=" + ++currentPage);
     }
 }
 function webAPI_GET_ALL(successCallBack, queryString = null) {
@@ -79,7 +79,6 @@ function setEditDeleteHandler () {
 
         $("#deleteAlert_Title").html(title);
         $("#deleteAlert_Id").val(id);
-        
     });
 };
 
@@ -132,7 +131,6 @@ const New = (data) => `
 
 function fillDataList(dataList, ETag) {
     currentETag = ETag;
-
     if(dataList.length != 0){
         for (let data of dataList) {
             insertDataRow(data);

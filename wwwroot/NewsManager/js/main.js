@@ -163,7 +163,6 @@ const createNouvelleHandler = () => {
                     .html("Créer");
                 
                 resetForm("#createNouvelle");
-                webAPI_GET_ALL(fillDataList);
             }
         });
     });
@@ -181,11 +180,11 @@ const deleteNouvelleHandler = () => {
         console.debug(`Deleting nouvelle with id ${id}`);
 
         uDelete(HOST + "/api/News/" + id, {
-            loading: _ => {
-                $("#deleteNouvelle_submit")
-                    .prop('disabled', true)
-                    .html('<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div>');
-            },
+            // loading: _ => {
+            //     $("#deleteNouvelle_submit")
+            //         .prop('disabled', false)
+            //         .html('<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div>');
+            // },
             error: _ => {
                 $('#createNouvelle_submit').prop('disabled', false)
                 $('#createNouvelle_submit').html("Impossible de supprimer la nouvelle");
@@ -199,9 +198,8 @@ const deleteNouvelleHandler = () => {
                     .html("Confirmer");
 
                 resetForm("#deleteAlertForm");
-                webAPI_GET_ALL(fillDataList);
-            }   
-        })
+            }
+        });
     });
 };
 
