@@ -163,7 +163,6 @@ const createNouvelleHandler = () => {
                     .html("Créer");
                 
                 resetForm("#createNouvelle");
-                webAPI_GET_ALL(fillDataList);
             }
         });
     });
@@ -199,7 +198,6 @@ const deleteNouvelleHandler = () => {
                     .html("Confirmer");
 
                 resetForm("#deleteAlertForm");
-                webAPI_GET_ALL(fillDataList);
             }
         });
     });
