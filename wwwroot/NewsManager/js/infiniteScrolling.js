@@ -1,4 +1,4 @@
-const Host = window.location.hostname; // "http://localhost:5000";
+const Host =  "http://localhost:5000"; //window.location.hostname;
 const API = "/api/news";
 const periodicRefreshPeriod = 5;
 const dataLimit = 6;
