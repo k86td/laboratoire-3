@@ -40,20 +40,6 @@ body {
     border-top: 1px solid lightgray;
 }
 
-/* .newsList {
-    width: 100%;
-    padding: 10px;
-} */
-
-.bookmarkLayout {
-    display: inline-block;
-    align-items: center;
-    border-radius: 8px;
-    padding-left: 5px;
-
-}
-
-
 .texte{
     width: fit-content;
 }

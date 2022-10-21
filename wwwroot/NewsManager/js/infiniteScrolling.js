@@ -7,32 +7,19 @@ let currentETag = "";
 let currentOffset = 0;
 let currentPage = 0;
 let retreivingData = false;
-webAPI_GET_ALL(fillDataList,"?sort=Date,desc&offset=" + currentOffset + "&limit=" + dataLimit);
+const scroll = document.getElementsByClassName("scrollContainer");
 
+scroll[0].addEventListener("scroll", handleScroll);
+webAPI_GET_ALL(fillDataList, "?sort=Date,desc&offset=" + currentOffset + "&limit=" + dataLimit);
 setInterval(() => {
     webAPI_HEAD(checkETag);
 }, periodicRefreshPeriod * 1000);
 
-window.onscroll = function() {
-    let totalPageHeight = document.body.scrollHeight; 
-    let scrollPoint = window.scrollY + window.innerHeight;
-    if(scrollPoint >= totalPageHeight)
-    {
-        if(!retreivingData){
-            retreivingData = true;
-            currentOffset++;
-            webAPI_GET_ALL(fillDataList,"?sort=Date,desc&offset=" + currentOffset + "&limit=" + dataLimit);
-        }
-        else{
-            console.log("Already retreiving data");
-        }
-    }
-}
 
 function checkETag(ETag) {
     if (ETag != currentETag) {
         currentETag = ETag;
-        webAPI_GET_ALL(refreshData,"?sort=Date,desc&limit=" + currentDataNumber + "&page=" + ++currentPage);
+        webAPI_GET_ALL(refreshData, "?sort=Date,desc&limit=" + currentDataNumber + "&page=" + ++currentPage);
     }
 }
 function webAPI_GET_ALL(successCallBack, queryString = null) {
@@ -69,7 +56,7 @@ function webAPI_HEAD(successCallBack) {
     });
 }
 
-function setEditDeleteHandler () {
+function setEditDeleteHandler() {
     $("#deleteAlertModal").on("show.bs.modal", event => {
         console.debug(event);
         let button = event.relatedTarget;
@@ -82,24 +69,24 @@ function setEditDeleteHandler () {
     });
 };
 
-function removeUndefinedImages () {
+function removeUndefinedImages() {
     $("img").on("error", event => {
         $(event.target).remove();
     });
 };
 
-function insertDataRow(dataRow){
-    $(".newsList").append(New(dataRow));
+function insertDataRow(dataRow) {
+    $(".scrollContainer").append(New(dataRow));
     removeUndefinedImages();
 }
 
 const New = (data) => `
 <div class="col">
     <div class="card border-dark">
-        <img class="card-img-top" src="${ data.Url}">
+        <img class="card-img-top" src="${data.Url}">
         <div class="card-body">
             <h5 class="card-title">${data.Title}</h5>
-            <p class="card-text">${ data.Texte.length >= 500 ? data.Texte.substring(0, 500) + " ..." : data.Texte }</p>
+            <p class="card-text">${data.Texte.length >= 500 ? data.Texte.substring(0, 500) + " ..." : data.Texte}</p>
             <div style="float: right;" class="btn-group" role="group" aria-label="Card interaction">
                 <button name="editNouvelle" id="edit_${data.Id}"  
                     type="button" 
@@ -123,7 +110,7 @@ const New = (data) => `
             </div>
         </div>
         <div class="card-footer">
-            <small>${ new Date(parseInt(data.Date)).toISOString().split("T")[0] }</small>
+            <small>${new Date(parseInt(data.Date)).toISOString().split("T")[0]}</small>
         </div>
     </div>
 </div>`;
@@ -131,33 +118,51 @@ const New = (data) => `
 
 function fillDataList(dataList, ETag) {
     currentETag = ETag;
-    if(dataList.length != 0){
+    if (dataList.length != 0) {
         for (let data of dataList) {
             insertDataRow(data);
             currentDataNumber++;
         }
         retreivingData = false;
-        console.log(currentDataNumber);
     }
-    else{
+    else {
         console.log("No more data to load");
     }
 }
 
 setEditDeleteHandler();
-function refreshData(dataList, ETag){
+function refreshData(dataList, ETag) {
     currentETag = ETag;
-    $(".newsList").empty();
-    if(dataList.lenght != 0){
+    $(".scrollContainer").empty();
+    if (dataList.lenght != 0) {
         for (let data of dataList) {
             insertDataRow(data);
         }
-        console.log("Data changed when" + currentDataNumber + "data was loaded");
     }
 }
 
-
-
-
-
-
+function handleScroll() {
+    const scrollDiv = document.getElementsByClassName('scrollContainer')[0];
+    let lastScrollTop = 0;
+    scrollDiv.onscroll = (e) => {
+        if (scrollDiv.scrollTop < lastScrollTop) {
+            // upscroll  
+            return;
+        }
+        else if (scrollDiv.scrollTop == lastScrollTop) {
+            // no scroll
+            return;
+        }
+        lastScrollTop = scrollDiv.scrollTop <= 0 ? 0 : scrollDiv.scrollTop;
+        if (scrollDiv.scrollTop + scrollDiv.offsetHeight >= scrollDiv.scrollHeight) {
+            if (!retreivingData) {
+                retreivingData = true;
+                currentOffset++;
+                webAPI_GET_ALL(fillDataList, "?sort=Date,desc&limit=" + dataLimit + "&offset=" + currentOffset);
+            }
+            else {
+                console.log("Already retreiving data");
+            }
+        }
+    }
+}
