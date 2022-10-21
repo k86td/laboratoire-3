@@ -51,12 +51,15 @@ const gatherFormDataToJson = (selector) => {
         return dict;
     };
 
-    let inputs = $(selector + " input,span,textarea");
+    // let inputs = $(selector + " input,span,textarea");
+    let inputs = $(selector);
+
+    console.debug(inputs);
 
     let ids = [];
     inputs.each((_, el) => {
         ids.push(el.id);
-    })
+    });
 
     let data = {};
 
@@ -71,6 +74,9 @@ const gatherFormDataToJson = (selector) => {
         if (key.includes("pre")) {
             key = key.replace("pre", "");
             data = appendToDict(data, key, $("#" + id).html());
+        }
+        else if (key.toLowerCase() == "id") {
+            data = appendToDict(data, key, parseInt($("#" + id).val()))
         }
         else if (key.toLowerCase().includes("date")) {
             data = appendToDict(data, key, new Date($("#" + id).val()).getTime())
@@ -115,6 +121,22 @@ const uDelete = async (url, callbacks) => {
     
     content = await content;
 };
+// create function to receive http method instead of having one per method
+const uPutJsonCallback = async (url, body, callbacks) => {
+    let content = $.ajax({
+        method: "PUT",
+        url: url,
+        data: JSON.stringify(body),
+        contentType: "application/json",
+        success: callbacks.success,
+        error: callbacks.error
+    });
+
+    if (callbacks.loading !== undefined)
+        callbacks.loading();
+    
+    content = await content;
+};
 
 const HOST = "http://localhost:5000";
 
@@ -136,7 +158,9 @@ const createNouvelleHandler = () => {
         event.stopPropagation()
 
         // gather form data
-        let json = gatherFormDataToJson("#createNouvelle");
+        let json = gatherFormDataToJson("#createNouvelle span,#createNouvelle input,#createNouvelle textarea");
+
+        console.debug(json);
 
         // send post request
         uPostJsonCallback(HOST + "/api/News", json, {
@@ -171,7 +195,6 @@ const createNouvelleHandler = () => {
 
 const deleteNouvelleHandler = () => {
 
-
     $("#deleteAlertForm").on("submit", event => {
         event.preventDefault()
         event.stopPropagation()
@@ -205,6 +228,60 @@ const deleteNouvelleHandler = () => {
     });
 };
 
+const editNouvelleHandler = () => {
+    inputSslUrlHandler("#editNouvelle_preUrl");
+    setDateInputDefaultDate("#editNouvelle_Date");
+
+    // set the event handlers
+
+    $("#editNouvelle_Url").on("input", event => {
+        let text = event.target.value;
+
+        if (text.length >= 2)
+            event.target.value = removeProtFromUrl(text);
+    });
+
+    $("#editNouvelle").on("submit", event => {
+        event.preventDefault()
+        event.stopPropagation()
+
+        // gather form data
+        let json = gatherFormDataToJson("#editNouvelle span,#editNouvelle input,#editNouvelle textarea");
+
+        console.debug(json);
+
+        // send post request
+        uPutJsonCallback(HOST + "/api/News", json, {
+            loading: _ => {
+                // set rolling icon
+                $("#editNouvelle_submit")
+                    .prop('disabled', true)
+                    .html('<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div>');
+            },
+            error: _ => {
+                $("#editNouvelle_submit").prop('disabled', false);
+                $("#editNouvelle_submit").removeClass("btn-primary");
+                $("#editNouvelle_submit").addClass("btn-danger");
+                $("#editNouvelle_submit").html("Impossible de modifier la nouvelle");
+            },
+            success: _ => {
+                $('#editNouvelleModal')
+                    .modal('hide')
+                
+                $('#editNouvelle_submit')
+                    .removeClass("btn-danger")
+                    .addClass("btn-primary")
+                    .prop('disabled', false)
+                    .html("Modifier");
+                
+                resetForm("#editNouvelle");
+                webAPI_HEAD(checkETag);
+            }
+        });
+    });
+};
+
 // create the handlers that manages creating a News
 createNouvelleHandler();
 deleteNouvelleHandler();
+editNouvelleHandler();
