@@ -138,7 +138,7 @@ const uPutJsonCallback = async (url, body, callbacks) => {
     content = await content;
 };
 
-const HOST = "http://localhost:5000";
+const HOST = window.location.hostname; // "http://localhost:5000";
 
 const createNouvelleHandler = () => {
     inputSslUrlHandler("#createNouvelle_preUrl");

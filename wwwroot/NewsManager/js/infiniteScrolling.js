@@ -1,4 +1,4 @@
-const Host = "http://localhost:5000";
+const Host = window.location.hostname; // "http://localhost:5000";
 const API = "/api/news";
 const periodicRefreshPeriod = 5;
 const dataLimit = 6;
@@ -134,7 +134,7 @@ const New = (data) => {
                     type="button" 
                     class="btn btn-danger" 
                     tooltip="Supprimer la nouvelle" 
-                    tooltip-position="right">
+                    tooltip-position="left">
                     <i style="font-size: 1.5rem; color: white;" class="bi bi-journal-minus"></i>
                 </button>
             </div>
