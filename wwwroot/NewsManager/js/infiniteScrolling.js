@@ -141,6 +141,9 @@ const New = (data) => {
         </div>
         <div class="card-footer">
             <small>${new Date(parseInt(data.Date)).toISOString().split("T")[0]}</small>
+            <div style="float: right;">
+                <span class="badge rounded-pill text-bg-secondary">${data.Category}</span>            
+            </div>
         </div>
     </div>
 </div>`
