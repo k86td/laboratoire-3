@@ -1,7 +1,7 @@
 const Host = "http://localhost:5000";
 const API = "/api/news";
 const periodicRefreshPeriod = 5;
-const dataLimit = 4;
+const dataLimit = 6;
 let currentDataNumber = 0;
 let currentETag = "";
 let currentOffset = 0;
@@ -58,7 +58,6 @@ function webAPI_HEAD(successCallBack) {
 
 function setEditDeleteHandler() {
     $("#deleteAlertModal").on("show.bs.modal", event => {
-        console.debug(event);
         let button = event.relatedTarget;
 
         let id = $(button).attr('data-bs-targetId');
@@ -66,6 +65,26 @@ function setEditDeleteHandler() {
 
         $("#deleteAlert_Title").html(title);
         $("#deleteAlert_Id").val(id);
+    });
+
+    $("#editNouvelleModal").on("show.bs.modal", event => {
+
+        let button = event.relatedTarget;
+
+        let id = $(button).attr('data-bs-targetId');
+        let title = $(button).attr('data-bs-targetTitle');
+        let url = removeProtFromUrl($(button).attr('data-bs-targetUrl'));
+        let category = $(button).attr('data-bs-targetCategory');
+        let texte = $(button).attr('data-bs-targetTexte')
+        let date = $(button).attr('data-bs-targetDate');
+
+        $("#editNouvelle_Id").val(id);
+        $("#editNouvelle_Title").val(title);
+        $("#editNouvelle_Url").val(url);
+        $("#editNouvelle_Category").val(category);
+        $("#editNouvelle_Date").html(date);
+        $("#editNouvelle_Texte").val(texte);
+        
     });
 };
 
@@ -80,7 +99,9 @@ function insertDataRow(dataRow) {
     removeUndefinedImages();
 }
 
-const New = (data) => `
+const New = (data) => {
+    console.debug(data);
+    return `
 <div class="col">
     <div class="card border-dark">
         <img class="card-img-top" src="${data.Url}">
@@ -92,7 +113,16 @@ const New = (data) => `
                     type="button" 
                     class="btn btn-warning" 
                     tooltip="Modifier la nouvelle" 
-                    tooltip-position="left">
+                    tooltip-position="left"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editNouvelleModal"
+                    data-bs-targetId="${data.Id}"
+                    data-bs-targetUrl="${data.Url}"
+                    data-bs-targetTitle="${data.Title}"
+                    data-bs-targetTexte="${data.Texte}"
+                    data-bs-targetDate="${data.Date}"
+                    data-bs-targetCategory="${data.Category}"
+                >
                     <i style="font-size: 1.5rem; color: white;" class="bi bi-pencil-square"></i>
                 </button>
                 <button name="deleteNouvelle" 
@@ -113,7 +143,8 @@ const New = (data) => `
             <small>${new Date(parseInt(data.Date)).toISOString().split("T")[0]}</small>
         </div>
     </div>
-</div>`;
+</div>`
+};
 
 
 function fillDataList(dataList, ETag) {

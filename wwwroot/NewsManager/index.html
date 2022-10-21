@@ -50,7 +50,7 @@
 
                                 <div class="input-group mb-3">
                                     <input required placeholder="Categorie" class="form-control"
-                                        id="createNouvelle_Categorie" type="text">
+                                        id="createNouvelle_Category" type="text">
                                 </div>
 
                                 <div class="input-group mb-3">
@@ -91,6 +91,56 @@
                                 <button id="deleteNouvelle_submit" type="submit"
                                     class="btn btn-danger">Confirmer</button>
                                 <button id="deleteNouvelle_cancel" type="button" class="btn btn-outline-primary"
+                                    data-bs-dismiss="modal" aria-label="Close">Annuler</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="modal fade" id="editNouvelleModal" data-bs-backdrop="static" data-bs-keyboard="false">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title fs-5">Modification d'une nouvelle</h2>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="editNouvelle">
+                                <input id="editNouvelle_Id" type="number" hidden>
+
+                                <div class="input-group mb-3">
+                                    <input required placeholder="Titre" class="form-control"
+                                        id="editNouvelle_Title" type="text">
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text noselect"
+                                        id="editNouvelle_preUrl">https://</span>
+                                    <input required placeholder="Url de l'image" class="form-control"
+                                        id="editNouvelle_Url" type="text"
+                                        aria-describedby="editNouvelle_preUrl">
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <input required placeholder="Categorie" class="form-control"
+                                        id="editNouvelle_Category" type="text">
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <textarea id="editNouvelle_Texte" required
+                                        placeholder="Description de la nouvelle" class="form-control"></textarea>
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <input required class="form-control" id="editNouvelle_Date" type="date">
+                                </div>
+
+                                <button id="editNouvelle_submit" type="submit"
+                                    class="btn btn-primary">Modifier</button>
+                                <button id="editNouvelle_cancel" type="button" class="btn btn-outline-danger"
                                     data-bs-dismiss="modal" aria-label="Close">Annuler</button>
                             </form>
                         </div>
